@@ -1,4 +1,4 @@
-﻿# Hack The Box â€” Impossible Password
+# Hack The Box - Impossible Password
 
 ![Platform](https://img.shields.io/badge/Platform-Hack%20The%20Box-green)
 ![Category](https://img.shields.io/badge/Category-Reverse%20Engineering-blue)
@@ -48,9 +48,9 @@ file impossible_password.bin
 
 The output identifies the target as a dynamically linked, stripped 64-bit ELF executable for x86-64 Linux.
 
-### Screenshot 1 â€” File identification
+### Screenshot 1 - File identification
 
-![Screenshot 1 â€” File identification](screenshots/file-identification.png)
+![Screenshot 1 - File identification](screenshots/file-identification.png)
 
 Next, I inspected the ELF header:
 
@@ -66,9 +66,9 @@ Important information:
 - Machine: AMD x86-64
 - Entry point: `0x4006a0`
 
-### Screenshot 2 â€” ELF header
+### Screenshot 2 - ELF header
 
-![Screenshot 2 â€” ELF header](screenshots/elf-header.png)
+![Screenshot 2 - ELF header](screenshots/elf-header.png)
 
 ## 3. Binary Security Protections
 
@@ -90,9 +90,9 @@ The results were:
 
 The executable is non-PIE, meaning its code addresses are fixed for this binary. The lack of symbols also means function names are not available in the normal disassembly.
 
-### Screenshot 3 â€” Checksec output
+### Screenshot 3 - Checksec output
 
-![Screenshot 3 â€” Checksec output](screenshots/checksec.png)
+![Screenshot 3 - Checksec output](screenshots/checksec.png)
 
 ## 4. Search for Interesting Strings
 
@@ -117,9 +117,9 @@ printf
 
 These strings suggest that the program reads user input, compares strings, and uses a pseudo-random number generator.
 
-### Screenshot 4 â€” Interesting strings
+### Screenshot 4 - Interesting strings
 
-![Screenshot 4 â€” Interesting strings](screenshots/strings.png)
+![Screenshot 4 - Interesting strings](screenshots/strings.png)
 
 ## 5. Inspect the .rodata Section
 
@@ -137,9 +137,9 @@ SuperSeKretKey
 
 The section also contains the input format string `%20s`, which limits each input read to 20 characters.
 
-### Screenshot 5 â€” .rodata section
+### Screenshot 5 - .rodata section
 
-![Screenshot 5 â€” .rodata section](screenshots/rodata.png)
+![Screenshot 5 - .rodata section](screenshots/rodata.png)
 
 ## 6. Analyze the First Password Check
 
@@ -198,9 +198,9 @@ Output:
 
 This confirms the first password directly from the program's memory.
 
-### Screenshot 6 â€” GDB password confirmation
+### Screenshot 6 - GDB password confirmation
 
-![Screenshot 6 â€” GDB password confirmation](screenshots/gdb-first-password.png)
+![Screenshot 6 - GDB password confirmation](screenshots/gdb-first-password.png)
 
 ## 7. Analyze the Dynamic Password Generator
 
@@ -255,9 +255,9 @@ char *generate(int length)
 
 The program calls this generator with a length of 20. Therefore, the second password is generated dynamically and depends on the execution time and global counter.
 
-### Screenshot 7 â€” Password generator disassembly
+### Screenshot 7 - Password generator disassembly
 
-![Screenshot 7 â€” Password generator disassembly](screenshots/password-generator-disassembly.png)
+![Screenshot 7 - Password generator disassembly](screenshots/password-generator-disassembly.png)
 
 ## 8. Recover the Flag Through XOR
 
@@ -289,9 +289,9 @@ The decoded output is:
 HTB{40b949f92b86b18}
 ```
 
-### Screenshot 8 â€” XOR flag recovery
+### Screenshot 8 - XOR flag recovery
 
-![Screenshot 8 â€” XOR flag recovery](screenshots/xor-flag-recovery.png)
+![Screenshot 8 - XOR flag recovery](screenshots/xor-flag-recovery.png)
 
 ## 9. Flag
 
